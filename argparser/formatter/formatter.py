@@ -131,6 +131,7 @@ def print_help(
     current_group: IArgumentGroup,
     group_lookup: IGroupLookup,
     help_arg: IArgument[Any],
+    config_arg: IArgument[Any],
 ) -> None:
     # def config_func(path: Path | None = None) -> None:
     #     """Path to a config file that contains additional args.
@@ -168,6 +169,9 @@ def print_help(
 
     print("\n" * (not empty_last_line))
     print("\n".join(help_arg.format(indent=indent)))
+
+    if is_root:
+        print("\n".join(config_arg.format(indent=indent)))
 
     if usage_example := current_group.config.usage_example:
         print("Example Usage:\n")

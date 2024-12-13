@@ -1,0 +1,9 @@
+other:
+    browser-location: c://users/me/browser/location
+    not-headless:
+    hi:
+        - 1
+        - >-
+            Joseph
+            is
+            my name.

@@ -3,13 +3,21 @@ import shutil
 import warnings
 from typing import Any, Callable, Literal, Sequence
 
-from argparser import utils
-from argparser import formatter
+from argparser import formatter, utils
 from argparser.headers.definitions import IArgument
 from argparser.headers.exceptions import ArgumentError, ParsingError
-from argparser.headers.types_c import FuncType, MatchArgRegex, Parameter, callback, null
+from argparser.headers.types_c import (
+    FuncType,
+    HandleReSet,
+    MatchArgRegex,
+    Parameter,
+    callback,
+    null,
+)
 
 __all__ = ["argument"]
+
+type _HRD = Literal["t", "s", "r"]
 
 
 class argument[T](IArgument[T]):
@@ -18,7 +26,8 @@ class argument[T](IArgument[T]):
         cls,
         alias: str | None = None,
         default: bool = False,
-        forward_kwargs: dict[str, Any] | None = None,
+        re_set: HandleReSet = "s",
+        kwargs: dict[str, Any] | None = None,
         resolution_order: int | None = None,
     ) -> "argument[bool]":
         """A helper method for creating a flag. This is just a wrapper around class the init method."""
@@ -30,8 +39,8 @@ class argument[T](IArgument[T]):
             default=default,
             d_type=None,
             constraints=None,
-            forward_kwargs=forward_kwargs,
-            handle_re_def="skip-config",
+            kwargs=kwargs,
+            re_set=re_set,
             resolution_order=resolution_order,
         )
 
@@ -44,8 +53,8 @@ class argument[T](IArgument[T]):
         default: T | Callable[[], T] | null = null(),
         d_type: Callable[[str], Any] | None = None,
         constraints: list[str] | Callable[[str], bool] | None = None,
-        forward_kwargs: dict[str, Any] | None = None,
-        handle_re_def: Literal["skip", "skip-config", "apply"] = "skip-config",
+        kwargs: dict[str, Any] | None = None,
+        re_set: HandleReSet = "rs",
         resolution_order: int | None = None,
     ) -> None:
         self.__names: list[str] = self.__validate_names(names)
@@ -54,8 +63,8 @@ class argument[T](IArgument[T]):
         self.__required: bool = required
         self.__d_type: Callable[[str], Any] | None = d_type
         self.__constraints: list[str] | Callable[[str], bool] | None = constraints
-        self.__forward_kwargs: dict[str, Any] | None = forward_kwargs
-        self.__handle_re_def: Literal["skip", "skip-config", "apply"] = handle_re_def
+        self.__kwargs: dict[str, Any] | None = kwargs
+        self.__handle_re_set: tuple[_HRD, _HRD] = self.__parse_hrd(re_set)
 
         self.__default: T | Callable[[], T] | null = default
         self.__obj: T | null = null()
@@ -72,6 +81,13 @@ class argument[T](IArgument[T]):
 
         self.__resolved: bool = False
         self.__resolution_order: int | None = self.__parse_res_order(resolution_order)
+
+    def __parse_hrd(self, hrd: HandleReSet) -> tuple[_HRD, _HRD]:
+        match hrd:
+            case "t" | "r" | "s":
+                return hrd, hrd
+            case _:
+                return tuple(hrd)  # pyright: ignore[reportReturnType]
 
     def __warn_and_raise(self) -> None:
         if self.__required and self.is_flag:
@@ -135,15 +151,24 @@ class argument[T](IArgument[T]):
             )
 
     def parse(self, group_parent: Any, args: list[str], from_config: bool) -> None:
-        if self.__handle_re_def == "skip" and self.__resolved:
-            return None
-        elif self.__handle_re_def == "skip-config" and self.__resolved and from_config:
-            return None
+        match self.__handle_re_set:
+            case _ if not self.__resolved:
+                pass
+            case ("s", _) if not from_config:
+                return None
+            case (_, "s") if from_config:
+                return None
+            case ("r", _) if not from_config:
+                raise ParsingError(f"Argument {self.__names} given multiple times")
+            case (_, "r") if from_config:
+                raise ParsingError(f"Argument {self.__names} given multiple times")
+            case _:
+                pass
 
         self.__obj = self.__parse_function(
             *((group_parent,) if group_parent else ()),
             *self.__validate_args(args),
-            **(self.__forward_kwargs or {}),
+            **(self.__kwargs or {}),
         )
 
         self.__resolved = True
@@ -262,6 +287,22 @@ class argument[T](IArgument[T]):
         self.__warn_and_raise()
 
         return self  # pyright: ignore[reportReturnType]
+
+    def __repr__(self) -> str:
+        alias = f"alias={self.__alias!r}, " if self.__alias else ""
+        names = f"named={self.__names}, " if self.__names else ""
+        position = f"pos={self.__position}, " if self.__position is not None else ""
+        default = f"default={self.__default}, "
+        res_ord = (
+            f"ord={self.__resolution_order}, "
+            if self.__resolution_order is not None
+            else ""
+        )
+        resolved = f"resolved={self.__resolved}, "
+        nargs = f"nargs=({self.__min_args},{self.__max_args}), "
+        obj = f"holds={self.__obj}"
+
+        return f"{argument.__name__}({nargs}{alias}{names}{position}{res_ord}{resolved}{default}{obj})"
 
     def format(
         self, indent: int = 2, name_size: int = 40, spec_size: int = 40

@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 description = "An argument parser for Python"
 license = { file = "LICENCE.txt" }
-dependencies = []
+dependencies = ["PyYAML"]
 
 [tool.setuptools.package-data]
 argparser = ["py.typed"]

@@ -1,6 +1,6 @@
 import typing
 
-from .types_c import FuncType, callback, null
+from .types_c import FuncType, HandleReSet, callback, null
 
 __all__ = ["IGroupConfig", "IArgument", "IArgumentGroup", "IGroupLookup"]
 
@@ -34,8 +34,8 @@ class IArgument[T](typing.Protocol):
         default: T | typing.Callable[[], T] | null = null(),
         d_type: typing.Callable[[str], typing.Any] | None = None,
         constraints: list[str] | typing.Callable[[str], bool] | None = None,
-        forward_kwargs: dict[str, typing.Any] | None = None,
-        handle_re_def: typing.Literal["skip", "skip-config", "apply"] = "skip-config",
+        kwargs: dict[str, typing.Any] | None = None,
+        re_set: HandleReSet = "rs",
         resolution_order: int | None = None,
     ) -> None: ...
     def resolve(self) -> None: ...
@@ -78,7 +78,8 @@ class IArgumentGroup(typing.Protocol):
     def set_args(
         self, *argument_tuple: tuple[IArgument[typing.Any], *tuple[str, ...]]
     ) -> None: ...
-    def resolve(self) -> None: ...
+    def clear(self) -> None: ...
+    def resolve(self, from_config: bool) -> None: ...
     @property
     def positional_args(self) -> tuple[IArgument[typing.Any], ...]: ...
     @property

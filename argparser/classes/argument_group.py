@@ -89,7 +89,10 @@ class ArgumentGroup(IArgumentGroup):
         for i in int_res_order[1] + str_res_order + int_res_order[0]:
             yield i
 
-    def resolve(self) -> None:
+    def clear(self) -> None:
+        self.__resolution_list.clear()
+
+    def resolve(self, from_config: bool) -> None:
         for arg_obj, *arg_strs in self.__resolution_order():
             assert arg_obj is not None, "Should never be none. You fucked something up"
 
@@ -105,7 +108,7 @@ class ArgumentGroup(IArgumentGroup):
                         )
                     group_parent = self.__group_parent_instance
 
-            arg_obj.parse(group_parent, arg_strs, False)
+            arg_obj.parse(group_parent, arg_strs, from_config)
 
         for arg in self.__arguments:
             arg.resolve()
@@ -157,3 +160,10 @@ class ArgumentGroup(IArgumentGroup):
         str_res_order.sort(key=lambda x: x.sort_key)
 
         return int_res_order[1] + str_res_order + int_res_order[0]
+
+    def __repr__(self) -> str:
+        name = f"name={self.__config.name!r}, "
+        group = f"group={self.__group_parent.__name__!r}, "
+        no_args = f"no_args={len(self.__arguments)}"
+
+        return f"{ArgumentGroup.__name__}({name}{group}{no_args})"

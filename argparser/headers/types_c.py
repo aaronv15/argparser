@@ -12,7 +12,12 @@ __all__ = [
     "FuncSignature",
     "callback",
     "CONSTANTS",
+    "HandleReSet",
+    "mut_wrap",
 ]
+
+
+type HandleReSet = Literal["t", "s", "r", "ts", "tr", "sr", "st", "rt", "rs"]
 
 
 class CONSTANTS:
@@ -80,6 +85,19 @@ class FuncSignature(NamedTuple):
     d_type: Callable[[str], Any] | None
     constraints: list[str] | Callable[[str], bool] | None
     func_type: FuncType
+
+
+class mut_wrap[T]:
+    def __init__(self, start: T, /) -> None:
+        self.__o = start
+
+    @property
+    def o(self) -> T:
+        return self.__o
+
+    @o.setter
+    def o(self, o: T) -> None:
+        self.__o = o
 
 
 class callback[T]:

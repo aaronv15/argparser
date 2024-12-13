@@ -1,22 +1,24 @@
 import inspect
+from pathlib import Path
 from typing import Any, Callable
 
 from argparser.headers.types_c import FuncSignature, FuncType, Parameter, null
 
-__all__ = ["read_function_signature"]
+__all__ = ["read_function_signature", "config_func"]
 
 
-# def config_func(path: Path | None = None) -> Path:
-#     """Path to a config file that contains additional args.
-#     If '-c' is specified but no path is given, the directory of the script
-#     entry point will be searched for a config.yaml file."""
-#     if path is None:
-#         if (p := Path(sys.argv[0]).parent.joinpath("config.yaml")).exists():
-#             return p
+def config_func(path: Path | None = None) -> Path | None:
+    """Path to a config file that contains additional args.
+    If '-c' is specified but no path is given, the directory of the script
+    entry point will be searched for a config.yaml file."""
 
-#         raise FileNotFoundError(f"File {p} not found")
+    if path is None:
+        import sys
 
-#     return path.resolve(strict=True)
+        if (p := Path(sys.argv[0]).parent.joinpath("config.yaml")).exists():
+            return p
+        raise FileNotFoundError(f"File {p} not found")
+    return path.resolve(strict=True)
 
 
 def read_function_signature(func: Callable[..., Any]) -> FuncSignature:
