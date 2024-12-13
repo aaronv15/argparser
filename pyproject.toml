@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "argparser"
+version = "0.1.2"
+authors = [{ name="Me", email="me@me.com" }]
+readme = "README.md"
+requires-python = ">=3.12"
+description = "An argument parser for Python"
+license = { file = "LICENCE.txt" }
+dependencies = []
+
+[tool.setuptools.package-data]
+argparser = ["py.typed"]
