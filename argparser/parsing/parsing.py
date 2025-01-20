@@ -1,11 +1,10 @@
 import re
+import json
 import typing
 from pathlib import Path
 from typing import Any
 
 import utils
-import yaml
-
 from argparser import formatter
 from argparser.classes import ArgumentGroup, GroupConfig, GroupLookup, argument
 from argparser.headers.definitions import IArgument, IArgumentGroup, IGroupConfig
@@ -267,7 +266,7 @@ def _read_config_dict(d: dict[str, Any]) -> list[str]:
 
 def _read_config(path: Path) -> list[str]:
     with open(path, "r") as stream:
-        contents = yaml.safe_load(stream.read())
+        contents = json.loads(stream.read())
 
     return _read_config_dict(contents)
 
@@ -283,6 +282,7 @@ def resolve() -> None:
         default=None,
         re_set="r",
         d_type=Path,
+        kwargs={"config_name": "config", "config_ext": ".json"},
     )(utils.config_func)
 
     import sys

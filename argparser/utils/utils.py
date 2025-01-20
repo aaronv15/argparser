@@ -7,15 +7,19 @@ from argparser.headers.types_c import FuncSignature, FuncType, Parameter, null
 __all__ = ["read_function_signature", "config_func"]
 
 
-def config_func(path: Path | None = None) -> Path | None:
+def config_func(
+    path: Path | None = None, *, config_name: str, config_ext: str
+) -> Path | None:
     """Path to a config file that contains additional args.
     If '-c' is specified but no path is given, the directory of the script
-    entry point will be searched for a config.yaml file."""
+    entry point will be searched for a config.json file."""
 
     if path is None:
         import sys
 
-        if (p := Path(sys.argv[0]).parent.joinpath("config.yaml")).exists():
+        if (
+            p := Path(sys.argv[0]).parent.joinpath(f"{config_name}{config_ext}")
+        ).exists():
             return p
         raise FileNotFoundError(f"File {p} not found")
     return path.resolve(strict=True)
