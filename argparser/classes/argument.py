@@ -3,10 +3,10 @@ import shutil
 import warnings
 from typing import Any, Callable, Literal, Sequence
 
-from argparser import formatter, utils
-from argparser.headers.definitions import IArgument
-from argparser.headers.exceptions import ArgumentError, ParsingError
-from argparser.headers.types_c import (
+from .. import formatter, utils
+from ..headers.definitions import IArgument
+from ..headers.exceptions import ArgumentError, ParsingError
+from ..headers.types_c import (
     FuncType,
     HandleReSet,
     MatchArgRegex,

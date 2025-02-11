@@ -1,7 +1,7 @@
 import shutil
 from typing import Any
 
-from argparser.headers.definitions import IArgument, IArgumentGroup, IGroupLookup
+from ..headers.definitions import IArgument, IArgumentGroup, IGroupLookup
 
 __all__ = ["split_by_width", "split_by_width_w_add", "print_help"]
 

@@ -2,7 +2,7 @@ import inspect
 from pathlib import Path
 from typing import Any, Callable
 
-from argparser.headers.types_c import FuncSignature, FuncType, Parameter, null
+from ..headers.types_c import FuncSignature, FuncType, Parameter, null
 
 __all__ = ["read_function_signature", "config_func"]
 

@@ -1,15 +1,14 @@
-import re
 import json
+import re
 import typing
 from pathlib import Path
 from typing import Any
 
-import utils
-from argparser import formatter
-from argparser.classes import ArgumentGroup, GroupConfig, GroupLookup, argument
-from argparser.headers.definitions import IArgument, IArgumentGroup, IGroupConfig
-from argparser.headers.exceptions import ParsingError
-from argparser.headers.types_c import CONSTANTS, MatchArgRegex
+from .. import formatter, utils
+from ..classes import ArgumentGroup, GroupConfig, GroupLookup, argument
+from ..headers.definitions import IArgument, IArgumentGroup, IGroupConfig
+from ..headers.exceptions import ParsingError
+from ..headers.types_c import CONSTANTS, MatchArgRegex
 
 type _ArgList = list[IArgumentGroup | IArgument[Any] | str]
 type _ArgTuple = tuple[IArgument[Any] | None, *tuple[str, ...]]

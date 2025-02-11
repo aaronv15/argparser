@@ -1,6 +1,6 @@
 import sys
 
-from argparser.headers.definitions import IArgumentGroup
+from ..headers.definitions import IArgumentGroup
 
 __all__ = ["GroupLookup"]
 

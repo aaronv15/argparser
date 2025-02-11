@@ -1,8 +1,8 @@
 import re
 
-from argparser.headers.definitions import IGroupConfig
-from argparser.headers.exceptions import ArgumentError
-from argparser.headers.types_c import MatchArgRegex
+from ..headers.definitions import IGroupConfig
+from ..headers.exceptions import ArgumentError
+from ..headers.types_c import MatchArgRegex
 
 __all__ = ["GroupConfig"]
 

@@ -1,9 +1,9 @@
 import re
 from typing import Any, Generator, Sequence
 
-from argparser.headers.definitions import IArgument, IArgumentGroup, IGroupConfig
-from argparser.headers.exceptions import ArgumentError
-from argparser.headers.types_c import FuncType
+from ..headers.definitions import IArgument, IArgumentGroup, IGroupConfig
+from ..headers.exceptions import ArgumentError
+from ..headers.types_c import FuncType
 
 type _PArgTuple = tuple[IArgument[Any], *tuple[str, ...]]
 
