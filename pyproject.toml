@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "argparser"
-version = "0.1.4"
-authors = [{ name="Me", email="me@me.com" }]
+version = "1.0.0"
+authors = [{ name="aaron", email="" }]
 readme = "README.md"
 requires-python = ">=3.12"
 description = "An argument parser for Python"
